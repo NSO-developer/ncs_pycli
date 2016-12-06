@@ -4,8 +4,8 @@ Gives you an interactive NSO python shell with tab completion.
 A power tool for quick prototyping
 
 ### Prerequisites
-*Python
-*IPython (https://ipython.org/)
+ * Python
+ * IPython (https://ipython.org/)
 
 If you already have python you can install IPython with
 
