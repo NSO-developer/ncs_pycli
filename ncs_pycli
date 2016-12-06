@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+from __future__ import print_function
+import ncs
+import IPython
+
+OPER = {
+    1: 'MOP_CREATED',
+    2: 'MOP_DELETED',
+    3: 'MOP_MODIFIED',
+    4: 'MOP_VALUE_SET',
+    5: 'MOP_MOVED_AFTER',
+    6: 'MOP_ATTR_SET'
+}
+
+class DiffIterator(object):
+     def __init__(self):
+         self.count = 0
+     def __call__(self, kp, op, oldv, newv):
+         print('kp={0}, op={1}, oldv={2}, newv={3}'.format(
+                 str(kp), OPER[op], str(oldv), str(newv)))
+         self.count += 1
+         return ncs.ITER_RECURSE
+
+def compare(self):
+    print("Diff set:")
+    self.diff_iterate(DiffIterator(), ncs.ITER_WANT_ATTR)
+
+ncs.maapi.Transaction.compare = compare
+
+if __name__ == '__main__':
+    m = ncs.maapi.Maapi()
+    m.start_user_session('admin', 'system', [])
+    trans = m.start_trans(ncs.RUNNING, ncs.READ_WRITE)
+
+    root = ncs.maagic.get_root(trans)
+
+    print("Your maagic object 'root -> %s' is now prepared... go have some fun!\ntrans.compare() to see your current transaction\ntrans.apply() to commit\nMaapi object can be found at m" % (str(root)))
+    IPython.embed(display_banner=False)
