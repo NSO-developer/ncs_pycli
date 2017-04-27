@@ -30,7 +30,7 @@ ncs.maapi.Transaction.compare = compare
 if __name__ == '__main__':
     m = ncs.maapi.Maapi()
     m.start_user_session('admin', 'system', [])
-    trans = m.start_trans(ncs.RUNNING, ncs.READ_WRITE)
+    trans = m.start_write_trans()
 
     root = ncs.maagic.get_root(trans)
 
