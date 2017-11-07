@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env ipython
 from __future__ import print_function
 import ncs
 import IPython
@@ -27,6 +27,10 @@ def compare(self):
 
 ncs.maapi.Transaction.compare = compare
 
+get_ipython().define_macro('new_trans', """trans=m.start_write_trans()
+root = ncs.maagic.get_root(trans)
+print("new transaction created")""")
+
 if __name__ == '__main__':
     m = ncs.maapi.Maapi()
     m.start_user_session('admin', 'system', [])
@@ -35,4 +39,7 @@ if __name__ == '__main__':
     root = ncs.maagic.get_root(trans)
 
     print("Your maagic object 'root -> %s' is now prepared... go have some fun!\ntrans.compare() to see your current transaction\ntrans.apply() to commit\ntrans.revert() to revert changes\nMaapi object can be found at m" % (str(root)))
+    print("""You can restart the transaction and create a fresh root object by invoking new_trans:
+In [1]: new_trans
+new transaction created""")
     IPython.embed(display_banner=False)
