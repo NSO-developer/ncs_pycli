@@ -25,13 +25,13 @@ def compare(self):
     print("Diff set:")
     self.diff_iterate(DiffIterator(), ncs.ITER_WANT_ATTR)
 
-ncs.maapi.Transaction.compare = compare
+def run():
+    ncs.maapi.Transaction.compare = compare
+    get_ipython().define_macro('new_trans', """ trans=m.start_write_trans()
+                                                root = ncs.maagic.get_root(trans)
+                                                print("new transaction created")
+                                                """)
 
-get_ipython().define_macro('new_trans', """trans=m.start_write_trans()
-root = ncs.maagic.get_root(trans)
-print("new transaction created")""")
-
-if __name__ == '__main__':
     m = ncs.maapi.Maapi()
     m.start_user_session('admin', 'system', [])
     trans = m.start_write_trans()
@@ -43,3 +43,6 @@ if __name__ == '__main__':
 In [1]: new_trans
 new transaction created""")
     IPython.embed(display_banner=False)
+
+if __name__ == '__main__':
+    run()
