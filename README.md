@@ -4,17 +4,26 @@ Gives you an interactive NSO python shell with tab completion.
 
 A power tool for quick prototyping
 
+## How to Install
+
+```bash
+pip install ncs_pycli
+```
+
 ### Prerequisites
- * Python
- * IPython (https://ipython.org/)
+
+- Python
+- IPython [ipython.org](https://ipython.org)
 
 If you already have python you can install IPython with
 
-    pip install ipython
-
-### Usage
-
+```bash
+pip install ipython
 ```
+
+## Usage
+
+```bash
 #> ncs_pycli
 Your maagic object 'root -> (root)' is now prepared... go have some fun!
 trans.compare() to see your current transaction
@@ -101,7 +110,6 @@ trans.compare()
 trans.apply()
 ```
 
-### Contact
+## Contact
 
 Contact Hakan Niska <hniska@cisco.com> with any suggestions or comments. If you find any bugs please fix them and send me a pull request.
-
