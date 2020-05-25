@@ -26,7 +26,7 @@ setup(
     author_email = 'hniska@cisco.com',
     entry_points={
         'console_scripts': [
-            'ncs_pycli=ncs-pycli.ncs_pycli:run'
+            'ncs_pycli=ncs_pycli.ncs_pycli:run'
         ],
     },
     install_requires=reqs,
