@@ -22,8 +22,8 @@ setup(
     long_description = long_description,
     long_description_content_type = 'text/markdown',
     url = 'https://github.com/NSO-developer/ncs_pycli.git',
-    author = 'Hakan Niska',
-    author_email = 'hniska@cisco.com',
+    author = 'Hakan Niska, Kiran Kumar Kotari',
+    author_email = 'hniska@cisco.com, kkotari@cisco.com',
     entry_points={
         'console_scripts': [
             'ncs_pycli=ncs_pycli.ncs_pycli:run'
