@@ -5,6 +5,7 @@ import sys
 import logging
 import subprocess
 import IPython as ipy
+from core import release as rel
 from IPython.terminal.interactiveshell import TerminalInteractiveShell as ipy_shell
 
 
@@ -31,13 +32,19 @@ def compare(self):
     self.diff_iterate(DiffIterator(), ncs.ITER_WANT_ATTR)
 
 class NcsPycli:
-    name = 'ncs_pycli'
+    name    = rel.name
+    version = rel.version
     command = ['ipython']
     options = []
-    version = '1.1.0'
 
-    __stdout = subprocess.PIPE
-    __stderr = subprocess.PIPE
+    _instance = None
+    __stdout  = subprocess.PIPE
+    __stderr  = subprocess.PIPE
+
+    def __new__(cls, log_level=logging.INFO, log_format=None, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = object.__new__(cls, *args, **kwargs)
+        return cls._instance
 
     def __init__(self, log_level=logging.INFO, log_format=None, *args, **kwargs):
         # logger setup
@@ -102,7 +109,16 @@ print("new transaction created")
         print("""You can restart the transaction and create a fresh root object by invoking new_trans:
 In [1]: new_trans
 new transaction created""")
-        ipy.embed(display_banner=False, config=shell.config)
+        ipy.embed(display_banner=False, config=shell.config, using=False)
+
+
+obj = NcsPycli()
+try:
+    import ncs
+except ModuleNotFoundError:
+    obj.logger.error('ncs module not found..!')
+    obj.logger.info('source ncsrc or add <ncs_dir>/src/ncs/pyapi path to $PYTHONPATH')
+
 
 def run():
     obj = NcsPycli()
