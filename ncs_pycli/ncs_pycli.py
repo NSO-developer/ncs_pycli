@@ -1,12 +1,9 @@
 #!/usr/bin/env ipython
 import os
-import ncs
 import sys
 import logging
 import subprocess
-import IPython as ipy
 from core import release as rel
-from IPython.terminal.interactiveshell import TerminalInteractiveShell as ipy_shell
 
 
 OPER = {
@@ -118,6 +115,14 @@ try:
 except ModuleNotFoundError:
     obj.logger.error('ncs module not found..!')
     obj.logger.info('source ncsrc or add <ncs_dir>/src/ncs/pyapi path to $PYTHONPATH')
+
+try:
+    import IPython as ipy
+    from IPython.terminal.interactiveshell import TerminalInteractiveShell as ipy_shell
+except ModuleNotFoundError:
+    obj.logger.error('no module ipython found..!')
+    obj.logger.info('you can install via pip "pip install ipython"')
+
 
 
 def run():
