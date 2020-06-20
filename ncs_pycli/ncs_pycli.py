@@ -4,6 +4,7 @@ import sys
 import logging
 import subprocess
 
+
 OPER = {
     1: 'MOP_CREATED',
     2: 'MOP_DELETED',
@@ -31,8 +32,8 @@ class Utils:
 
     _instance = None
 
-    __stdout = subprocess.PIPE
-    __stderr = subprocess.PIPE
+    __stdout  = subprocess.PIPE
+    __stderr  = subprocess.PIPE
 
     def __new__(cls, log_level=logging.INFO, log_format=None):
         if cls._instance is None:
@@ -75,6 +76,7 @@ class NcsPycli(Utils):
     options = []
 
     _instance = None
+
     def __init__(self, log_level=logging.INFO, log_format=None, *args, **kwargs):
         Utils.__init__(self, log_level, log_format)
 
@@ -118,6 +120,7 @@ print("new transaction created")
 In [1]: new_trans
 new transaction created""")
         ipy.embed(display_banner=False, config=shell.config, using=False)
+
 
 obj = NcsPycli()
 try:
