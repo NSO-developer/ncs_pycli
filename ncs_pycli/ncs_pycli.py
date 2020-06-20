@@ -108,7 +108,8 @@ root = ncs.maagic.get_root(trans)
 print("new transaction created")
 """)
         path = os.path.abspath('.')
-        os.environ['PYTHONPATH'] += ':'+path
+        # os.environ['PYTHONPATH'] += ':'+path
+        sys.path.insert(0, path)
         m = ncs.maapi.Maapi()
         m.start_user_session('admin', 'system', [])
         trans = m.start_write_trans()
