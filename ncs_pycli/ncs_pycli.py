@@ -3,7 +3,6 @@ import os
 import sys
 import logging
 import subprocess
-from core import release as rel
 
 
 OPER = {
@@ -41,7 +40,7 @@ class Utils:
             cls._instance = object.__new__(cls)
         return cls._instance
 
-    def __init__(self, log_level, log_format):
+    def __init__(self, log_level=logging.INFO, log_format=None, *args, **kwargs):
         # logger setup
         self.__format = log_format
         self.logger = self.__set_logger_level(log_level)
@@ -54,7 +53,6 @@ class Utils:
         logger = logging.getLogger(self.name)
         logger.setLevel(log_level)
         return logger
-
 
     def _run_command(self, command):
         self.logger.debug("command `{}` running on terminal".format(' '.join(command)))
@@ -72,8 +70,8 @@ class Utils:
         sys.exit()
 
 class NcsPycli(Utils):
-    name    = rel.name
-    version = rel.version
+    name = 'ncs_pycli'
+    version = '1.3.0'
     command = ['ipython']
     options = []
 
@@ -137,7 +135,6 @@ try:
 except ModuleNotFoundError:
     obj.logger.error('no module ipython found..!')
     obj.logger.info('you can install via pip "pip install ipython"')
-
 
 
 def run():
