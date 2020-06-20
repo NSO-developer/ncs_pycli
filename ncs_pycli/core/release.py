@@ -2,7 +2,7 @@ name = 'ncs_pycli'
 
 _version_major = 1
 _version_minor = 2
-_version_patch = 0
+_version_patch = 1
 _version_extra = None
 
 # Construct full version string from these.

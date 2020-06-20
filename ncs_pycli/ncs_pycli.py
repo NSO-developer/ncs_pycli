@@ -28,22 +28,20 @@ def compare(self):
     print("Diff set:")
     self.diff_iterate(DiffIterator(), ncs.ITER_WANT_ATTR)
 
-class NcsPycli:
-    name    = rel.name
-    version = rel.version
-    command = ['ipython']
-    options = []
+class Utils:
+    name = 'Utils'
 
     _instance = None
+
     __stdout  = subprocess.PIPE
     __stderr  = subprocess.PIPE
 
-    def __new__(cls, log_level=logging.INFO, log_format=None, *args, **kwargs):
+    def __new__(cls, log_level=logging.INFO, log_format=None):
         if cls._instance is None:
-            cls._instance = object.__new__(cls, *args, **kwargs)
+            cls._instance = object.__new__(cls)
         return cls._instance
 
-    def __init__(self, log_level=logging.INFO, log_format=None, *args, **kwargs):
+    def __init__(self, log_level, log_format):
         # logger setup
         self.__format = log_format
         self.logger = self.__set_logger_level(log_level)
@@ -57,7 +55,8 @@ class NcsPycli:
         logger.setLevel(log_level)
         return logger
 
-    def __run_command(self, command):
+
+    def _run_command(self, command):
         self.logger.debug("command `{}` running on terminal".format(' '.join(command)))
         p = subprocess.Popen(command, stdout=self.__stdout, stderr=self.__stderr)
         out, err = p.communicate()
@@ -66,19 +65,30 @@ class NcsPycli:
             self.logger.debug("`{}` ran successfully".format(' '.join(command)))
             return out
         self.logger.error("command issue: {}".format(err))
-        self.__exit
+        self._exit
 
     @property
-    def __exit(self):
+    def _exit(self):
         sys.exit()
+
+class NcsPycli(Utils):
+    name    = rel.name
+    version = rel.version
+    command = ['ipython']
+    options = []
+
+    _instance = None
+
+    def __init__(self, log_level=logging.INFO, log_format=None, *args, **kwargs):
+        Utils.__init__(self, log_level, log_format)
 
     def _create_profile(self):
         self.command += ['profile', 'create']
         self.logger.info('creating ipython profile')
-        out = self.__run_command(self.command)
+        out = self._run_command(self.command)
         if out is None or out == '':
             self.logger.info("couldn't able to create an ipython instance.")
-            self.__exit
+            self._exit
 
     def _get_shell(self):
         if ipy.get_ipython() is None:
@@ -89,7 +99,10 @@ class NcsPycli:
             shell.user_ns['shell'] = shell
         return ipy.get_ipython()
 
-    def initialize(self):
+    def initialize(self, cmd_lst):
+        if '--version' in cmd_lst or '-v' in cmd_lst:
+            print('ncs_pycli version {}'.format(self.version))
+            self._exit
         ncs.maapi.Transaction.compare = compare
         shell = self._get_shell()
         shell.define_macro('new_trans', """trans=m.start_write_trans()
@@ -129,7 +142,7 @@ except ModuleNotFoundError:
 
 def run():
     obj = NcsPycli()
-    obj.initialize()
+    obj.initialize(sys.argv)
 
 
 if __name__ == '__main__':
