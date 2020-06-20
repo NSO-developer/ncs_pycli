@@ -1,12 +1,8 @@
 #!/usr/bin/env ipython
 import os
-import ncs
 import sys
 import logging
 import subprocess
-import IPython as ipy
-from IPython.terminal.interactiveshell import TerminalInteractiveShell as ipy_shell
-
 
 OPER = {
     1: 'MOP_CREATED',
@@ -30,14 +26,18 @@ def compare(self):
     print("Diff set:")
     self.diff_iterate(DiffIterator(), ncs.ITER_WANT_ATTR)
 
-class NcsPycli:
-    name = 'ncs_pycli'
-    command = ['ipython']
-    options = []
-    version = '1.1.0'
+class Utils:
+    name = 'Utils'
+
+    _instance = None
 
     __stdout = subprocess.PIPE
     __stderr = subprocess.PIPE
+
+    def __new__(cls, log_level=logging.INFO, log_format=None):
+        if cls._instance is None:
+            cls._instance = object.__new__(cls)
+        return cls._instance
 
     def __init__(self, log_level=logging.INFO, log_format=None, *args, **kwargs):
         # logger setup
@@ -53,7 +53,7 @@ class NcsPycli:
         logger.setLevel(log_level)
         return logger
 
-    def __run_command(self, command):
+    def _run_command(self, command):
         self.logger.debug("command `{}` running on terminal".format(' '.join(command)))
         p = subprocess.Popen(command, stdout=self.__stdout, stderr=self.__stderr)
         out, err = p.communicate()
@@ -62,19 +62,29 @@ class NcsPycli:
             self.logger.debug("`{}` ran successfully".format(' '.join(command)))
             return out
         self.logger.error("command issue: {}".format(err))
-        self.__exit
+        self._exit
 
     @property
-    def __exit(self):
+    def _exit(self):
         sys.exit()
+
+class NcsPycli(Utils):
+    name = 'ncs_pycli'
+    version = '1.3.0'
+    command = ['ipython']
+    options = []
+
+    _instance = None
+    def __init__(self, log_level=logging.INFO, log_format=None, *args, **kwargs):
+        Utils.__init__(self, log_level, log_format)
 
     def _create_profile(self):
         self.command += ['profile', 'create']
         self.logger.info('creating ipython profile')
-        out = self.__run_command(self.command)
+        out = self._run_command(self.command)
         if out is None or out == '':
             self.logger.info("couldn't able to create an ipython instance.")
-            self.__exit
+            self._exit
 
     def _get_shell(self):
         if ipy.get_ipython() is None:
@@ -85,13 +95,18 @@ class NcsPycli:
             shell.user_ns['shell'] = shell
         return ipy.get_ipython()
 
-    def initialize(self):
+    def initialize(self, cmd_lst):
+        if '--version' in cmd_lst or '-v' in cmd_lst:
+            print('ncs_pycli version {}'.format(self.version))
+            self._exit
         ncs.maapi.Transaction.compare = compare
         shell = self._get_shell()
         shell.define_macro('new_trans', """trans=m.start_write_trans()
 root = ncs.maagic.get_root(trans)
 print("new transaction created")
 """)
+        path = os.path.abspath('.')
+        os.environ['PYTHONPATH'] += ':'+path
         m = ncs.maapi.Maapi()
         m.start_user_session('admin', 'system', [])
         trans = m.start_write_trans()
@@ -102,11 +117,26 @@ print("new transaction created")
         print("""You can restart the transaction and create a fresh root object by invoking new_trans:
 In [1]: new_trans
 new transaction created""")
-        ipy.embed(display_banner=False, config=shell.config)
+        ipy.embed(display_banner=False, config=shell.config, using=False)
+
+obj = NcsPycli()
+try:
+    import ncs
+except ModuleNotFoundError:
+    obj.logger.error('ncs module not found..!')
+    obj.logger.info('source ncsrc or add <ncs_dir>/src/ncs/pyapi path to $PYTHONPATH')
+
+try:
+    import IPython as ipy
+    from IPython.terminal.interactiveshell import TerminalInteractiveShell as ipy_shell
+except ModuleNotFoundError:
+    obj.logger.error('no module ipython found..!')
+    obj.logger.info('you can install via pip "pip install ipython"')
+
 
 def run():
     obj = NcsPycli()
-    obj.initialize()
+    obj.initialize(sys.argv)
 
 
 if __name__ == '__main__':
