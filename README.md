@@ -1,4 +1,4 @@
-# ncs_pycli
+# ncs_pycli (or) ncs-pycli
 
 Gives you an interactive NSO python shell with tab completion.
 
@@ -7,7 +7,7 @@ A power tool for quick prototyping
 ## How to Install
 
 ```bash
-pip install ncs_pycli
+pip install ncs-pycli
 ```
 
 ### Prerequisites
@@ -24,7 +24,7 @@ pip install ipython
 ## Usage
 
 ```bash
-#> ncs_pycli
+#> ncs_pycli (or) ncs-pycli
 Your maagic object 'root -> (root)' is now prepared... go have some fun!
 trans.compare() to see your current transaction
 trans.apply() to commit
