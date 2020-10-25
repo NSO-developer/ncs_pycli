@@ -71,7 +71,7 @@ class Utils:
 
 class NcsPycli(Utils):
     name = 'ncs_pycli'
-    version = '1.3.0'
+    version = '1.3.1'
     command = ['ipython']
     options = []
 
