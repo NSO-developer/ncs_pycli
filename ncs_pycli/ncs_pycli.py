@@ -110,11 +110,17 @@ print("new transaction created")
         path = os.path.abspath('.')
         # os.environ['PYTHONPATH'] += ':'+path
         sys.path.insert(0, path)
-        m = ncs.maapi.Maapi()
-        m.start_user_session('admin', 'system', [])
-        trans = m.start_write_trans()
-        root = ncs.maagic.get_root(trans)
-        new_trans = shell.user_ns['new_trans']
+        try:
+            import _ncs
+            m = ncs.maapi.Maapi()
+            m.start_user_session('admin', 'system', [])
+            trans = m.start_write_trans()
+            root = ncs.maagic.get_root(trans)
+            new_trans = shell.user_ns['new_trans']
+        except _ncs.error.Error as e:
+            self.logger.error("cloudn't able to find ncs running..!")
+            self.logger.error(e.args[0])
+            exit(-1)
 
         print("Your maagic object 'root -> %s' is now prepared... go have some fun!\ntrans.compare() to see your current transaction\ntrans.apply() to commit\ntrans.revert() to revert changes\nMaapi object can be found at m" % (str(root)))
         print("""You can restart the transaction and create a fresh root object by invoking new_trans:
