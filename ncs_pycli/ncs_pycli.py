@@ -118,7 +118,7 @@ print("new transaction created")
             root = ncs.maagic.get_root(trans)
             new_trans = shell.user_ns['new_trans']
         except _ncs.error.Error as e:
-            if 'Failed to connect to ConfD' in e.args:
+            if 'Failed to connect to ConfD' in e.args[0]:
                 self.logger.error("cloudn't able to find ncs running..!")
             self.logger.error(e.args[0])
             exit(-1)
